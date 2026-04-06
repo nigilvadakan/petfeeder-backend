@@ -80,3 +80,16 @@ scheduleRef.on("child_changed", async (snapshot) => {
 
 // ❗ Keep process alive (important for Render free tier)
 setInterval(() => {}, 1000);
+// 🔥 DUMMY SERVER FOR RENDER (IMPORTANT)
+const express = require("express");
+const app = express();
+
+const PORT = process.env.PORT || 3000;
+
+app.get("/", (req, res) => {
+  res.send("PetFeeder Backend Running 🚀");
+});
+
+app.listen(PORT, () => {
+  console.log(`🌐 Server running on port ${PORT}`);
+});

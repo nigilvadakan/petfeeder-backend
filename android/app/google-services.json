@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "12144020335",
+    "firebase_url": "https://petfeeder-506cf-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "petfeeder-506cf",
+    "storage_bucket": "petfeeder-506cf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:12144020335:android:460e095f81aa1c6d2af69a",
+        "android_client_info": {
+          "package_name": "com.smartpetfeeder.petfeeder"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKxe_V4YCGRN3yFwv6r12vjKNrk6tZOd0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

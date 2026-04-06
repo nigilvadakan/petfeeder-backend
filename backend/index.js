@@ -1,7 +1,14 @@
 const admin = require("firebase-admin");
 
-// 🔐 Load Firebase key from Render ENV
-const serviceAccount = JSON.parse(process.env.FIREBASE_KEY);
+// 🔐 Safe loading for Render (prevents crash if ENV missing)
+let serviceAccount;
+
+try {
+  serviceAccount = JSON.parse(process.env.FIREBASE_KEY);
+} catch (e) {
+  console.error("❌ FIREBASE_KEY missing or invalid");
+  process.exit(1);
+}
 
 // ✅ Initialize Firebase
 admin.initializeApp({
@@ -24,26 +31,30 @@ scheduleRef.on("child_changed", async (snapshot) => {
   const uid = snapshot.key;
   const userSchedules = snapshot.val();
 
+  if (!userSchedules) return; // ✅ safety (no crash)
+
   for (const scheduleId in userSchedules) {
 
     const schedule = userSchedules[scheduleId];
 
+    if (!schedule) continue; // ✅ safety
+
     console.log("Checking:", scheduleId, schedule.status);
 
-    // ✅ TRIGGER ONLY ONCE
+    // ✅ TRIGGER ONLY ONCE (YOUR LOGIC UNCHANGED)
     if (schedule.status === "done" && schedule.notified !== true) {
 
       console.log("🚀 Trigger:", scheduleId);
 
-      const tokenSnap = await db.ref(`users/${uid}/fcmToken`).once("value");
-      const token = tokenSnap.val();
-
-      if (!token) {
-        console.log("❌ No token found");
-        continue;
-      }
-
       try {
+        const tokenSnap = await db.ref(`users/${uid}/fcmToken`).once("value");
+        const token = tokenSnap.val();
+
+        if (!token) {
+          console.log("❌ No token found");
+          continue;
+        }
+
         // 🔔 SEND NOTIFICATION
         await admin.messaging().send({
           token: token,
@@ -55,7 +66,7 @@ scheduleRef.on("child_changed", async (snapshot) => {
 
         console.log("✅ Notification sent:", scheduleId);
 
-        // 🔥 MARK AS NOTIFIED
+        // 🔥 MARK AS NOTIFIED (YOUR LOGIC)
         await db.ref(`feedingSchedules/${uid}/${scheduleId}`).update({
           notified: true
         });
@@ -66,3 +77,6 @@ scheduleRef.on("child_changed", async (snapshot) => {
     }
   }
 });
+
+// ❗ Keep process alive (important for Render free tier)
+setInterval(() => {}, 1000);
